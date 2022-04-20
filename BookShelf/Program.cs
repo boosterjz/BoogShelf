@@ -1,7 +1,12 @@
+using Microsoft.EntityFrameworkCore;
+using BookShelf.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<BookShelfDbContext>(optionsBuilder => 
+    optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
 
 var app = builder.Build();
 

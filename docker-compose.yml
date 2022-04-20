@@ -5,7 +5,7 @@ services:
     container_name: book-shelf-db
     image: postgres:alpine
     environment:
-      - POSTGRES_PASSWORD=pass_db199^
+      - POSTGRES_PASSWORD=pass1_
       - POSTGRES_USER=book_user
       - POSTGRES_DB=book_db
     ports:
@@ -17,7 +17,7 @@ services:
     restart: always
 
   book-shelf-app:
-    container_name: app
+    container_name: book-shelf-app
     depends_on:
       - db
     build:
