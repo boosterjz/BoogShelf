@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<BookShelfDbContext>(optionsBuilder => 
     optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
+builder.Services.AddScoped<IRepository, BookShelfRepository>();
 
 var app = builder.Build();
 
@@ -14,13 +15,13 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
+    app.UseDeveloperExceptionPage();
 }
+
+app.UseStatusCodePages();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
