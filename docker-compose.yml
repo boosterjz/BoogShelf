@@ -13,7 +13,7 @@ services:
     networks:
       - book-shelf-net  
     volumes: 
-      - book-shelf-db-data:/var/lib/postgres/data
+      - book-shelf-db-data:/var/lib/postgresql/data
     restart: always
 
   book-shelf-app:
