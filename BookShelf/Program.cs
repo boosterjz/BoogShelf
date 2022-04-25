@@ -12,7 +12,8 @@ try {
     // Add services to the container.
     builder.Services.AddControllersWithViews();
     builder.Services.AddDbContext<BookShelfDbContext>(optionsBuilder => 
-        optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
+        optionsBuilder
+            .UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
     builder.Services.AddScoped<IRepository, BookShelfRepository>();
 
     builder.Logging.ClearProviders();

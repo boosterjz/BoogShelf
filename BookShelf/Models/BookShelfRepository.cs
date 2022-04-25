@@ -1,4 +1,4 @@
-using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookShelf.Models {
     public class BookShelfRepository : IRepository {
@@ -8,7 +8,7 @@ namespace BookShelf.Models {
             _dbContext = dbContext;
         }
 
-        public IQueryable<Author> Authors => _dbContext.Authors;
-        public IQueryable<Book> Books => _dbContext.Books;
+        public IQueryable<Author> Authors => _dbContext.Authors.Include(a => a.Books);
+        public IQueryable<Book> Books => _dbContext.Books.Include(b => b.Author);
     }
 }
