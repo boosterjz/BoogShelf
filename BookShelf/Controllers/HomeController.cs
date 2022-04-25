@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using BookShelf.Models;
+using BookShelf.Models.ViewModels;
 using NLog;
 
 namespace BookShelf.Controllers;
@@ -17,12 +18,16 @@ public class HomeController : Controller
         _repository = repository;
     }
 
-    public IActionResult Index(int page = 1)
+    public ViewResult Index(int page = 1)
     {
-        return View(_repository.Books
-            .OrderBy(b => b.BookId)
-            .Skip((page - 1) * PageSize)
-            .Take(PageSize));
+        return View(new BooksListViewModel() {
+            Books = _repository.Books.OrderBy(b => b.BookId).Skip((page - 1) * PageSize).Take(PageSize),
+            PagingInfo = new PagingInfo() {
+                CurrentPage = page,
+                ItemsPerPage = PageSize,
+                TotalItems = _repository.Books.Count()
+            }
+        });
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

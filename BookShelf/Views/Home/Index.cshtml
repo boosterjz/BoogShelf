@@ -2,9 +2,9 @@
     ViewData["Title"] = "Home Page";
 }
 @using System.Globalization
-@model IQueryable<Book>
+@model BooksListViewModel
 
-@foreach (var b in Model)
+@foreach (var b in Model.Books)
 {
     <div>
         <h3>@b.Title</h3>
