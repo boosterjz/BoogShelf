@@ -1,8 +1,16 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+@using System.Globalization
+@model IQueryable<Book>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@foreach (var b in Model)
+{
+    <div>
+        <h3>@b.Title</h3>
+        <h4>@b.Author?.Name</h4>
+        @b.Description
+        <h4>@b.Price.ToString("c2", new CultureInfo("ru-RU"))</h4>
+    </div>
+}
+

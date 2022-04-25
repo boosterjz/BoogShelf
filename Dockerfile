@@ -3,6 +3,7 @@ WORKDIR /src
 
 COPY *.sln .
 COPY BookShelf/*.csproj ./BookShelf/
+COPY BookShelf.Tests/*.csproj ./BookShelf.Tests/
 RUN dotnet restore
 
 COPY BookShelf/. ./BookShelf/
