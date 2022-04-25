@@ -28,5 +28,26 @@ namespace BookShelf.Tests {
             Assert.Equal("Book1", resultArray[0].Title);
             Assert.Equal("Book2", resultArray[1].Title);
         }
+
+        [Fact]
+        public void CanPaginate() {
+            var mock = new Mock<IRepository>();
+            mock.Setup(m => m.Books).Returns(new Book[] {
+                new() {BookId = 1, Title = "b1"},
+                new() {BookId = 2, Title = "b2"},
+                new() {BookId = 3, Title = "b3"},
+                new() {BookId = 4, Title = "b4"},
+                new() {BookId = 5, Title = "b5"},
+            }.AsQueryable());
+            var controller = new HomeController(null!, mock.Object);
+            controller.PageSize = 3;
+
+            var result = (controller.Index(2) as ViewResult)?.ViewData.Model as IEnumerable<Book>;
+
+            var resultArray = result?.ToArray();
+            Assert.Equal(2, resultArray?.Length);
+            Assert.Equal("b4", resultArray?[0].Title);
+            Assert.Equal("b5", resultArray?[1].Title);
+        }
     }
 }
