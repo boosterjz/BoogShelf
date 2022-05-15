@@ -25,5 +25,22 @@ namespace BookShelf.Test {
             Assert.Equal(2, cartModel.Cart.Lines.Count());
             Assert.Equal("myUrl", cartModel.ReturnUrl);
         }
+
+        [Fact]
+        public void CanUpdateCart() {
+            var mockedRepository = new Mock<IRepository>();
+            mockedRepository.Setup(r => r.Books).Returns(new Book[] {
+                new Book {BookId = 1, Title = "B1"}
+            }.AsQueryable());
+
+            var testCart = new Cart();
+
+            var cartModel = new CartModel(mockedRepository.Object, testCart);
+            cartModel.OnPost(1, "myUrl");
+
+            Assert.Single(testCart.Lines);
+            Assert.Equal("B1", testCart.Lines.First().Book.Title);
+            Assert.Equal(1, testCart.Lines.First().Quantity);
+        }
     }
 }
