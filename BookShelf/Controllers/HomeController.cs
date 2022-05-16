@@ -8,10 +8,10 @@ namespace BookShelf.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly IRepository _repository;
+    private readonly IStoreRepository _repository;
     public int PageSize = 4;
 
-    public HomeController(IRepository repository)
+    public HomeController(IStoreRepository repository)
     {
         _repository = repository;
     }

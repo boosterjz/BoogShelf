@@ -10,7 +10,7 @@ namespace BookShelf.Test {
         public void CanLoadCart() {
             var b1 = new Book {BookId = 1, Title = "Book 1"};
             var b2 = new Book {BookId = 2, Title = "Book 2"};
-            var mockedRepository = new Mock<IRepository>();
+            var mockedRepository = new Mock<IStoreRepository>();
             mockedRepository.Setup(r => r.Books).Returns(new Book[] {
                 b1, b2
             }.AsQueryable());
@@ -28,7 +28,7 @@ namespace BookShelf.Test {
 
         [Fact]
         public void CanUpdateCart() {
-            var mockedRepository = new Mock<IRepository>();
+            var mockedRepository = new Mock<IStoreRepository>();
             mockedRepository.Setup(r => r.Books).Returns(new Book[] {
                 new Book {BookId = 1, Title = "B1"}
             }.AsQueryable());

@@ -14,7 +14,7 @@ try {
     builder.Services.AddDbContext<BookShelfDbContext>(optionsBuilder => 
         optionsBuilder
             .UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
-    builder.Services.AddScoped<IRepository, BookShelfRepository>();
+    builder.Services.AddScoped<IStoreRepository, BookShelfRepository>();
 
     builder.Logging.ClearProviders();
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);

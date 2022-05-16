@@ -13,7 +13,7 @@ namespace BookShelf.Tests {
 
         [Fact]
         public void CanSelectCategories() {
-            var mock = new Mock<IRepository>();
+            var mock = new Mock<IStoreRepository>();
             mock.Setup(m => m.Books).Returns(new Book[] {
                 new Book {BookId = 1, Title = "P1",
                     Category = "Apples"},
@@ -43,7 +43,7 @@ namespace BookShelf.Tests {
 
             // Arrange
             string categoryToSelect = "Apples";
-            var mock = new Mock<IRepository>();
+            var mock = new Mock<IStoreRepository>();
             mock.Setup(m => m.Books).Returns(new Book[] {
                 new Book {BookId = 1, Title = "P1", Category = "Apples"},
                 new Book {BookId = 4, Title = "P2", Category = "Oranges"},

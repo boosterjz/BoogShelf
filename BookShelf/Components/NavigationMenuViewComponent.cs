@@ -4,9 +4,9 @@ using BookShelf.Models;
 namespace BookShelf.Components {
 
     public class NavigationMenuViewComponent : ViewComponent {
-        private IRepository _repository;
+        private IStoreRepository _repository;
 
-        public NavigationMenuViewComponent(IRepository repository) {
+        public NavigationMenuViewComponent(IStoreRepository repository) {
             _repository = repository;
         }
 

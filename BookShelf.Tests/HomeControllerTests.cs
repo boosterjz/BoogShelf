@@ -14,7 +14,7 @@ namespace BookShelf.Tests {
         [Fact]
         public void CanUseRepository() {
             // устанавливаем имитацию базы данных для контроллера
-            var mock = new Mock<IRepository>();
+            var mock = new Mock<IStoreRepository>();
             mock.Setup(m => m.Books).Returns(new Book[] {
                 new() { BookId = 1, Title = "Book1" },
                 new() { BookId = 2, Title = "Book2" },
@@ -34,7 +34,7 @@ namespace BookShelf.Tests {
 
         [Fact]
         public void CanPaginate() {
-            var mock = new Mock<IRepository>();
+            var mock = new Mock<IStoreRepository>();
             mock.Setup(m => m.Books).Returns(new Book[] {
                 new() {BookId = 1, Title = "b1"},
                 new() {BookId = 2, Title = "b2"},
@@ -55,7 +55,7 @@ namespace BookShelf.Tests {
 
         [Fact]
         public void CanSendPaginationViewModel() {
-            var mock = new Mock<IRepository>();
+            var mock = new Mock<IStoreRepository>();
             mock.Setup(m => m.Books).Returns(new Book[] {
                 new() {BookId = 1, Title = "b1"},
                 new() {BookId = 2, Title = "b2"},
@@ -77,7 +77,7 @@ namespace BookShelf.Tests {
         [Fact]
         public void CanFilterBooks() {
 
-            var mock = new Mock<IRepository>();
+            var mock = new Mock<IStoreRepository>();
             mock.Setup(m => m.Books).Returns(new Book[] {
                 new Book {BookId = 1, Title = "b1", Category = "Cat1"},
                 new Book {BookId = 2, Title = "b2", Category = "Cat2"},
@@ -99,7 +99,7 @@ namespace BookShelf.Tests {
 
         [Fact]
         public void GenerateCategorySpecificBookCount() {
-            var mock = new Mock<IRepository>();
+            var mock = new Mock<IStoreRepository>();
             mock.Setup(m => m.Books).Returns(new Book[] {
                 new Book {BookId = 1, Title = "P1", Category = "Cat1"},
                 new Book {BookId = 2, Title = "P2", Category = "Cat2"},

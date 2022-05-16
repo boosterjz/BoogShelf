@@ -5,11 +5,11 @@ using BookShelf.Models;
 
 namespace BookShelf.Pages {
     public class CartModel : PageModel {
-        private IRepository _repository;
+        private IStoreRepository _repository;
         public Cart Cart { get; set; }
         public string ReturnUrl { get; set; } = "/";
 
-        public CartModel(IRepository repository, Cart cartService) {
+        public CartModel(IStoreRepository repository, Cart cartService) {
             _repository = repository;
             Cart = cartService;
         }
