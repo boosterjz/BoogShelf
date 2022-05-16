@@ -18,6 +18,6 @@ namespace BookShelf.Models {
         public decimal ComputeTotalValue() =>
             Lines.Sum(l => l.Book.Price * l.Quantity);
 
-        public void Clear() => Lines.Clear();
+        public virtual void Clear() => Lines.Clear();
     }
 }
