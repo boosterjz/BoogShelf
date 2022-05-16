@@ -8,31 +8,30 @@ namespace BookShelf.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
     private readonly IRepository _repository;
     public int PageSize = 4;
 
-    public HomeController(ILogger<HomeController> logger, IRepository repository)
+    public HomeController(IRepository repository)
     {
-        _logger = logger;
         _repository = repository;
     }
 
-    public ViewResult Index(int page = 1)
-    {
-        return View(new BooksListViewModel() {
-            Books = _repository.Books.OrderBy(b => b.BookId).Skip((page - 1) * PageSize).Take(PageSize),
+    public ViewResult Index(string? category, int page = 1) =>
+        View(new BooksListViewModel() {
+            Books = _repository.Books
+                .Where(b => category == null || b.Category == category)
+                .OrderBy(b => b.BookId)
+                .Skip((page - 1) * PageSize)
+                .Take(PageSize),
             PagingInfo = new PagingInfo() {
                 CurrentPage = page,
                 ItemsPerPage = PageSize,
-                TotalItems = _repository.Books.Count()
-            }
+                TotalItems = category == null
+                    ? _repository.Books.Count()
+                    : _repository.Books
+                        .Where(b => b.Category == category)
+                        .Count()
+            },
+            CurrentCategory = category
         });
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
 }
