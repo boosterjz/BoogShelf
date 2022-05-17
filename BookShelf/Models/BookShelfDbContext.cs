@@ -7,7 +7,7 @@ namespace BookShelf.Models {
         public DbSet<Author> Authors => Set<Author>();
         public DbSet<Order> Orders => Set<Order>();
 
-        public BookShelfDbContext(DbContextOptions options) 
+        public BookShelfDbContext(DbContextOptions<BookShelfDbContext> options) 
             : base(options) { }
     }
 }
