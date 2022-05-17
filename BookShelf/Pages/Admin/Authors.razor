@@ -1,0 +1,66 @@
+@page "/admin/authors"
+@inherits OwningComponentBase<IStoreRepository>
+
+<table class="table table-sm table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th><th>Имя</th>
+            <th>Год рождения</th><th>Год смерти</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (AuthorData?.Count() > 0) {
+            @foreach (var a in AuthorData) {
+                <tr>
+                    <td>@a.AuthorId</td>
+                    <td>@a.Name</td>
+                    <td>@a.BirthYear</td>
+                    <td>@a.DeathYear</td>
+                    <td>
+                        <NavLink class="btn btn-info btn-sm"
+                                 href="@GetDetailsUrl(a.AuthorId)">
+                            Детали
+                        </NavLink>
+                        <NavLink class="btn btn-warning btn-sm"
+                                 href="@GetEditUrl(a.AuthorId)">
+                            Редактировать
+                        </NavLink>
+                        <button class="btn btn-danger btn-sm"
+                                 @onclick="@(e => DeleteAuthor(a))">
+                            Удалить
+                        </button>
+                    </td>
+                </tr>
+            }
+        } else {
+            <tr>
+                <td colspan="5" class="text-center">Нет авторов</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<NavLink class="btn btn-primary" href="/admin/authors/create">Создать</NavLink>
+
+@code {
+    public IStoreRepository Repository => Service;
+
+    public IEnumerable<Author> AuthorData { get; set; } 
+        = Enumerable.Empty<Author>();
+
+    protected async override Task OnInitializedAsync() {
+        await UpdateData();
+    }
+
+    public async Task UpdateData() {
+        AuthorData = await Repository.Authors.ToListAsync();
+    }
+
+    public async Task DeleteAuthor(Author a) {
+        Repository.DeleteAuthor(a);
+        await UpdateData();
+    }
+
+    public string GetDetailsUrl(ulong id) => $"/admin/authors/details/{id}";
+    public string GetEditUrl(ulong id) => $"/admin/authors/edit/{id}";
+}

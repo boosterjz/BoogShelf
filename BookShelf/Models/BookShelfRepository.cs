@@ -31,7 +31,11 @@ namespace BookShelf.Models {
             _dbContext.SaveChanges();
         }
 
-        public void Save() {
+        public void SaveBook(Book b) {
+            _dbContext.SaveChanges();
+        }
+
+        public void SaveAuthor(Author a) {
             _dbContext.SaveChanges();
         }
     }

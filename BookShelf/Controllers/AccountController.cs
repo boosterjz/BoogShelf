@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using BookShelf.Models.ViewModels;
 
 namespace BookShelf.Controllers {
-
     public class AccountController : Controller {
         private UserManager<IdentityUser> userManager;
         private SignInManager<IdentityUser> signInManager;

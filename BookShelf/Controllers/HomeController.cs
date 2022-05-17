@@ -28,9 +28,7 @@ public class HomeController : Controller
                 ItemsPerPage = PageSize,
                 TotalItems = category == null
                     ? _repository.Books.Count()
-                    : _repository.Books
-                        .Where(b => b.Category == category)
-                        .Count()
+                    : _repository.Books.Count(b => b.Category == category)
             },
             CurrentCategory = category
         });
