@@ -2,10 +2,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookShelf.Models {
 
-    public class EFOrderRepository : IOrderRepository {
+    public class BookShelfOrderRepository : IOrderRepository {
         private BookShelfDbContext _context;
 
-        public EFOrderRepository(BookShelfDbContext ctx) {
+        public BookShelfOrderRepository(BookShelfDbContext ctx) {
             _context = ctx;
         }
 

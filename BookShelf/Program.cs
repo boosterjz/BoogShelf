@@ -1,44 +1,69 @@
 using Microsoft.EntityFrameworkCore;
 using BookShelf.Models;
-using NLog;
-using NLog.Web;
 
-var logger = LogManager.Setup().GetCurrentClassLogger();
-logger.Debug("Initializing main");
+using Microsoft.AspNetCore.Identity;
 
-try {
-    var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
-    // Add services to the container.
-    builder.Services.AddControllersWithViews();
-    builder.Services.AddDbContext<BookShelfDbContext>(optionsBuilder => 
-        optionsBuilder
-            .UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
-    builder.Services.AddScoped<IStoreRepository, BookShelfRepository>();
+builder.Services.AddControllersWithViews();
 
-    builder.Logging.ClearProviders();
-    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-    builder.Host.UseNLog();
+builder.Services.AddDbContext<BookShelfDbContext>(opts => 
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
 
-    var app = builder.Build();
+builder.Services.AddScoped<IStoreRepository, BookShelfRepository>();
+builder.Services.AddScoped<IOrderRepository, BookShelfOrderRepository>();
 
-    // Configure the HTTP request pipeline.
-    if (!app.Environment.IsDevelopment())
-    {
-        app.UseExceptionHandler("/Home/Error");
-        app.UseDeveloperExceptionPage();
-    }
+builder.Services.AddRazorPages();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+builder.Services.AddScoped<Cart>(sp => SessionCart.GetCart(sp));
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddServerSideBlazor();
 
-    app.UseStatusCodePages();
-    app.UseStaticFiles();
-    app.UseRouting();
-    app.UseAuthorization();
-    app.MapDefaultControllerRoute();
+builder.Services.AddDbContext<AppIdentityDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection")));
 
-    app.Run();
-} catch (Exception exc) {
-    logger.Error(exc, "Stopped execution");
-    throw;
-} finally {
-    LogManager.Shutdown();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppIdentityDbContext>();
+
+var app = builder.Build();
+
+if (app.Environment.IsProduction()) {
+    app.UseExceptionHandler("/error");
 }
+
+app.UseRequestLocalization(opts => {
+    opts.AddSupportedCultures("ru-RU")
+    .AddSupportedUICultures("ru-RU")
+    .SetDefaultCulture("ru-RU");
+});
+
+app.UseStaticFiles();
+app.UseSession();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllerRoute("catpage",
+    "{category}/Page{page:int}",
+    new { Controller = "Home", action = "Index" });
+
+app.MapControllerRoute("page", "Page{page:int}",
+    new { Controller = "Home", action = "Index", page = 1 });
+
+app.MapControllerRoute("category", "{category}",
+    new { Controller = "Home", action = "Index", page = 1 });
+
+app.MapControllerRoute("pagination",
+    "Books/Page{page}",
+    new { Controller = "Home", action = "Index", page = 1 });
+
+app.MapDefaultControllerRoute();
+app.MapRazorPages();
+app.MapBlazorHub();
+app.MapFallbackToPage("/admin/{*catchall}", "/Admin/Index");
+
+SeedData.EnsurePopulated(app);
+IdentitySeedData.EnsurePopulated(app);
+
+app.Run();
