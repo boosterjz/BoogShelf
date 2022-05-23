@@ -3,6 +3,7 @@ using BookShelf.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookShelf.Controllers;
 
@@ -93,7 +94,11 @@ public class AccountController : Controller {
     [Authorize]
     public async Task<ViewResult> UserPage() {
         var user = await _userManager.FindByNameAsync(User.Identity?.Name);
-        var orders = _context.Orders.Where(o => o.UserId == user.Id);
+        var orders = _context
+            .Orders
+            .Where(o => o.UserId == user.Id)
+            .Include(o => o.Lines)
+            .ThenInclude(l => l.Product);
         return View(orders);
     }
 
