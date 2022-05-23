@@ -1,29 +1,65 @@
-﻿using System.Diagnostics;
+﻿using BookShelf.Models;
+using BookShelf.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using BookShelf.Models;
-using NLog;
 
 namespace BookShelf.Controllers;
 
-public class HomeController : Controller
-{
-    private readonly ILogger<HomeController> _logger;
-    private readonly IRepository _repository;
+public class HomeController : Controller {
+    private readonly IStoreRepository _repository;
+    public int PageSize = 4;
 
-    public HomeController(ILogger<HomeController> logger, IRepository repository)
-    {
-        _logger = logger;
-        _repository = repository;
+    public HomeController(IStoreRepository repo) {
+        _repository = repo;
     }
 
-    public IActionResult Index()
-    {
-        return View(_repository.Books);
-    }
+    public ViewResult Index(string? category, int productPage = 1)
+        => View(new ProductsListViewModel {
+            Products = _repository.Products
+                .Where(p => category == null || p.Category == category)
+                .OrderBy(p => p.ProductId)
+                .Skip((productPage - 1) * PageSize)
+                .Take(PageSize),
+            PagingInfo = new PagingInfo {
+                CurrentPage = productPage,
+                ItemsPerPage = PageSize,
+                TotalItems = category == null
+                    ? _repository.Products.Count()
+                    : _repository.Products.Count(e => e.Category == category)
+            },
+            CurrentCategory = category
+        });
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
+    public ViewResult Genre(string? genre, int productPage = 1) => 
+        View("Index", new ProductsListViewModel {
+            Products = _repository.Products
+                .Where(p => genre == null || p.Genre == genre)
+                .OrderBy(p => p.ProductId)
+                .Skip((productPage - 1) * PageSize)
+                .Take(PageSize),
+            PagingInfo = new PagingInfo {
+                CurrentPage = productPage,
+                ItemsPerPage = PageSize,
+                TotalItems = genre == null
+                    ? _repository.Products.Count()
+                    : _repository.Products.Count(e => e.Genre == genre)
+            },
+            CurrentGenre = genre
+        });
+    
+    public ViewResult Author(string? author, int productPage = 1) => 
+        View("Index", new ProductsListViewModel {
+            Products = _repository.Products
+                .Where(p => author == null || p.Author == author)
+                .OrderBy(p => p.ProductId)
+                .Skip((productPage - 1) * PageSize)
+                .Take(PageSize),
+            PagingInfo = new PagingInfo {
+                CurrentPage = productPage,
+                ItemsPerPage = PageSize,
+                TotalItems = author == null
+                    ? _repository.Products.Count()
+                    : _repository.Products.Count(e => e.Author == author)
+            },
+            CurrentAuthor = author
+        });
 }

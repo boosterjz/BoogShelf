@@ -1,0 +1,13 @@
+﻿@model IEnumerable<string>
+
+<h1>Все жанры:</h1>
+
+@foreach (var genre in Model)
+{
+    <a class="btn btn-outline-secondary"
+       asp-action="Genre" asp-controller="Home"
+       asp-route-genre="@genre"
+       asp-route-productPage="1">
+        @genre
+    </a>
+}

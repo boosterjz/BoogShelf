@@ -1,0 +1,13 @@
+﻿@page
+
+<div class="text-center">
+    <h2>Спасибо!</h2>
+    <p>Ваш заказ №@OrderId успешно размещен.</p>
+    <p>Доставим как можно скорее!</p>
+    <a class="btn btn-primary" asp-controller="Home">Обратно в магазин</a>
+</div>
+
+@functions {
+    [BindProperty(SupportsGet = true)]
+    public string? OrderId { get; set; }
+}

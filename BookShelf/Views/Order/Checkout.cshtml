@@ -1,0 +1,35 @@
+﻿@model BookShelf.Models.Order
+
+<h2>Сверить заказ</h2>
+<p>Пожалуйста, заполните форму снизу, и мы доставим вам заказ как можно быстрее!</p>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Checkout" method="post">
+    <h3>Данные о доставке:</h3>
+    <div class="form-group">
+        <label>ФИО:</label><input asp-for="Name" class="form-control"/>
+    </div>
+    <h3>Адрес</h3>
+    <div class="form-group">
+        <label>Улица:</label><input asp-for="Street" class="form-control"/>
+    </div>
+    <div class="form-group">
+        <label>Дом:</label><input asp-for="House" class="form-control"/>
+    </div>
+    <div class="form-group">
+        <label>Квартира:</label><input asp-for="Apartment" class="form-control"/>
+    </div>
+    <div class="form-group">
+        <label>Город:</label><input asp-for="City" class="form-control"/>
+    </div>
+    <div class="form-group">
+        <label>Индекс:</label><input asp-for="Zip" class="form-control"/>
+    </div>
+    <div class="form-group">
+        <label>Страна:</label><input asp-for="Country" class="form-control"/>
+    </div>
+    <div class="text-center">
+        <input class="btn btn-primary m-2" type="submit" value="Оформить заказ"/>
+    </div>
+</form>

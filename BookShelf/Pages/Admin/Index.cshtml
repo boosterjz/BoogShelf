@@ -1,0 +1,17 @@
+﻿@page "/admin"
+@{  Layout = null; }
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "admin")]
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>Book Shelf Администрирование</title>
+    <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <base href="/" />  
+</head>
+<body>    
+    <component type="typeof(Routed)" render-mode="Server" />
+    <script src="/_framework/blazor.server.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+﻿@model IEnumerable<string>
+
+<h1>Все категории:</h1>
+
+@foreach (var category in Model)
+{
+    <a class="btn btn-outline-secondary"
+       asp-action="Index" asp-controller="Home"
+       asp-route-category="@category"
+       asp-route-productPage="1">
+        @category
+    </a>
+}
