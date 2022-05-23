@@ -1,44 +1,83 @@
-using Microsoft.EntityFrameworkCore;
 using BookShelf.Models;
-using NLog;
-using NLog.Web;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
-var logger = LogManager.Setup().GetCurrentClassLogger();
-logger.Debug("Initializing main");
+var builder = WebApplication.CreateBuilder(args);
 
-try {
-    var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllersWithViews();
 
-    // Add services to the container.
-    builder.Services.AddControllersWithViews();
-    builder.Services.AddDbContext<BookShelfDbContext>(optionsBuilder => 
-        optionsBuilder
-            .UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
-    builder.Services.AddScoped<IRepository, BookShelfRepository>();
+builder.Services.AddDbContext<StoreDbContext>(opts =>
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("BookShelfConnection")));
 
-    builder.Logging.ClearProviders();
-    builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-    builder.Host.UseNLog();
+builder.Services.AddScoped<IStoreRepository, EfStoreRepository>();
+builder.Services.AddScoped<IOrderRepository, EfOrderRepository>();
 
-    var app = builder.Build();
+builder.Services.AddDbContext<AppIdentityDbContext>(opts =>
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection")));
 
-    // Configure the HTTP request pipeline.
-    if (!app.Environment.IsDevelopment())
-    {
-        app.UseExceptionHandler("/Home/Error");
-        app.UseDeveloperExceptionPage();
-    }
+builder.Services.AddIdentity<BookShelfUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppIdentityDbContext>();
 
-    app.UseStatusCodePages();
-    app.UseStaticFiles();
-    app.UseRouting();
-    app.UseAuthorization();
-    app.MapDefaultControllerRoute();
+builder.Services.AddRazorPages();
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+builder.Services.AddScoped(SessionCart.GetCart);
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddServerSideBlazor();
 
-    app.Run();
-} catch (Exception exc) {
-    logger.Error(exc, "Stopped execution");
-    throw;
-} finally {
-    LogManager.Shutdown();
+
+var app = builder.Build();
+
+if (app.Environment.IsProduction()) {
+    app.UseExceptionHandler("/error");
 }
+
+app.UseRequestLocalization(opts => {
+    opts.AddSupportedCultures("ru-RU")
+    .AddSupportedUICultures("ru-RU")
+    .SetDefaultCulture("ru-RU");
+});
+
+app.UseStaticFiles();
+app.UseSession();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllerRoute("catpage",
+    "Categories/{category}/Page{productPage:int}",
+    new { Controller = "Home", action = "Index" });
+
+app.MapControllerRoute("genrepage",
+    "Genres/{genre}/Page{productPage:int}",
+    new { Controller = "Home", action = "Genre" });
+
+app.MapControllerRoute("page",
+    "Author/{author}/Page{productPage:int}",
+    new { Controller = "Home", action = "author" });
+
+app.MapControllerRoute("page", "Page{productPage:int}",
+    new { Controller = "Home", action = "Index", productPage = 1 });
+
+app.MapControllerRoute("category", "Categories/{category}",
+    new { Controller = "Home", action = "Index", productPage = 1 });
+
+app.MapControllerRoute("genres", "Genres/{category}",
+    new { Controller = "Home", action = "Genre", productPage = 1 });
+
+app.MapControllerRoute("authors", "Authors/{category}",
+    new { Controller = "Home", action = "Author", productPage = 1 });
+
+app.MapControllerRoute("pagination",
+    "Products/Page{productPage}",
+    new { Controller = "Home", action = "Index", productPage = 1 });
+
+app.MapDefaultControllerRoute();
+app.MapRazorPages();
+app.MapBlazorHub();
+app.MapFallbackToPage("/admin/{*catchall}", "/Admin/Index");
+
+SeedData.EnsurePopulated(app);
+IdentitySeedData.EnsurePopulated(app);
+
+app.Run();

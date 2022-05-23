@@ -1,0 +1,15 @@
+﻿@model IEnumerable<string>
+
+<h1>Все авторы:</h1>
+
+<div class="row">
+    @foreach (var author in Model)
+    {
+        <a class="btn btn-outline-secondary col-3 m-1 p-1"
+           asp-action="Author" asp-controller="Home"
+           asp-route-author="@author"
+           asp-route-productPage="1">
+            @author
+        </a>
+    }
+</div>

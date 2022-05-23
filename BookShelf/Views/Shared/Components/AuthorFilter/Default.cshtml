@@ -1,0 +1,32 @@
+﻿@model IEnumerable<string>
+
+<div class="d-grid gap-2">
+    <h3>Авторы:</h3>
+    @if (Model.Count() <= 3)
+    {
+        @foreach (string author in Model) {
+            <a class="btn @(author == ViewBag.SelectedAuthor 
+                              ? "btn-primary": "btn-outline-secondary")"
+               asp-action="Author" asp-controller="Home"
+               asp-route-author="@author"
+               asp-route-productPage="1">
+                @author
+            </a>
+        }
+    }
+    else
+    {
+        @foreach (string author in Model.Take(3)) {
+            <a class="btn @(author == ViewBag.SelectedAuthor 
+                              ? "btn-primary": "btn-outline-secondary")"
+               asp-action="Author" asp-controller="Home"
+               asp-route-author="@author"
+               asp-route-productPage="1">
+                @author
+            </a>
+        }
+        <a class="btn btn-outline-secondary" asp-action="Authors" asp-controller="Filter">
+            Все авторы...
+        </a>
+    }
+</div>

@@ -1,0 +1,32 @@
+﻿@model IEnumerable<string>
+
+<div class="d-grid gap-2">
+    <h3>Жанры:</h3>
+    @if (Model.Count() <= 3)
+    {
+        @foreach (string genre in Model) {
+            <a class="btn @(genre == ViewBag.SelectedGenre 
+                              ? "btn-primary": "btn-outline-secondary")"
+               asp-action="Genre" asp-controller="Home"
+               asp-route-genre="@genre"
+               asp-route-productPage="1">
+                @genre
+            </a>
+        }
+    }
+    else
+    {
+        @foreach (string genre in Model.Take(3)) {
+            <a class="btn @(genre == ViewBag.SelectedGenre 
+                              ? "btn-primary": "btn-outline-secondary")"
+               asp-action="Genre" asp-controller="Home"
+               asp-route-genre="@genre"
+               asp-route-productPage="1">
+                @genre
+            </a>
+        }
+        <a class="btn btn-outline-secondary" asp-action="Genres" asp-controller="Filter">
+            Все жанры...
+        </a>
+    }
+</div>
