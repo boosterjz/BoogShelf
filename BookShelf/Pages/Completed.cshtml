@@ -1,14 +1,13 @@
-@page
+﻿@page
 
 <div class="text-center">
-    <h2>Заказ оформлен</h2>
-    <p>Спасибо за размещение заказа#@OrderId</p>
-    <p>Доставим как можно быстрее! Приятного чтения :)</p>
-    <a class="btn btn-primary" asp-controller="Home">Вернуться на Главную</a>
+    <h2>Спасибо!</h2>
+    <p>Ваш заказ №@OrderId успешно размещен.</p>
+    <p>Доставим как можно скорее!</p>
+    <a class="btn btn-primary" asp-controller="Home">Обратно в магазин</a>
 </div>
 
 @functions {
-
     [BindProperty(SupportsGet = true)]
     public string? OrderId { get; set; }
 }

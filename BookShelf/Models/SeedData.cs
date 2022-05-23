@@ -1,95 +1,77 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+namespace BookShelf.Models;
 
-namespace BookShelf.Models {
-    public static class SeedData {
-        public static void EnsurePopulated(IApplicationBuilder app) {
-            var context = app.ApplicationServices
-                .CreateScope().ServiceProvider.GetRequiredService<BookShelfDbContext>();
+public static class SeedData {
 
-            if (context.Database.GetPendingMigrations().Any()) {
-                context.Database.Migrate();
-            }
+    public static void EnsurePopulated(IApplicationBuilder app) {
+        StoreDbContext context = app.ApplicationServices
+            .CreateScope().ServiceProvider.GetRequiredService<StoreDbContext>();
 
-            if (!context.Authors.Any()) {
-                context.Authors.AddRange(
-                    new Author {
-                        AuthorId = 1,
-                        BirthYear = 1947,
-                        Name = "Стивен Кинг"
-                    },
-                    new Author {
-                        AuthorId = 2,
-                        BirthYear = 1821,
-                        DeathYear = 1881,
-                        Name = "Фёдор Достоевский"
-                    },
-                    new Author {
-                        AuthorId = 3,
-                        BirthYear = 1892,
-                        DeathYear = 1973,
-                        Name = "Джон Толкин"
-                    },
-                    new Author {
-                        AuthorId = 4,
-                        BirthYear = 1948,
-                        Name = "Джордж Мартин"
-                    }
-                );
-            }
+        // if (context.Database.GetPendingMigrations().Any())
+        // {
+        //     context.Database.Migrate();
+        // }
 
-            if (!context.Books.Any()) {
-                context.Books.AddRange(
-                   new Book {
-                        BookId = 1,
-                        AuthorId = 1,
-                        Title = "ОНО",
-                        Category = "проза",
-                        Genre = "ужасы",
-                        Description = "В маленьком провинциальном городке Дерри много лет назад семерым подросткам пришлось столкнуться с кромешным ужасом — живым воплощением ада. Прошли годы... Подростки повзрослели, и ничто, казалось, не предвещало новой беды. Но кошмар прошлого вернулся, неведомая сила повлекла семерых друзей назад, в новую битву со Злом. Ибо в Дерри опять льется кровь и бесследно исчезают люди. Ибо вернулось порождение ночного кошмара, настолько невероятное, что даже не имеет имени...",
-                        PageAmount = 1248,
-                        Price = 700.00M,
-                        Publishing = "АСТ",
-                        PublishingYear = 2021,
-                    },
-                    new Book {
-                        BookId = 2,
-                        AuthorId = 2,
-                        Title = "Идиот",
-                        Category = "проза",
-                        Genre = "роман",
-                        Description = "Завораживающая история трагических страстей, связавших купца Парфена Рогожина, бывшую содержанку богатого дворянина Настасью Филипповну и \"идеального человека\" князя Мышкина — беспомощного идиота в мире корысти и зла, гласящая о том, что сострадание, возможно, единственный закон человеческого бытия. Она по-прежнему актуальна и воспринимается ярко и непосредственно, будто была написана вчера.",
-                        PageAmount = 640,
-                        Price = 430.00M,
-                        Publishing = "Эксмо",
-                        PublishingYear = 2016
-                    },
-                    new Book {
-                        BookId = 3,
-                        AuthorId = 3,
-                        Title = "Властелин колец",
-                        Category = "проза",
-                        Genre = "фэнтези",
-                        Description = "Трилогия \"Властелин Колец\" бесспорно возглавляет список \"культовых\" книг ХХ века. Ее автор, Дж. Р.Р. Толкин, профессор Оксфордского университета, специалист по древнему и средневековому английскому языку, создал удивительный мир — Средиземье, который вот уже без малого пятьдесят лет неодолимо влечет к себе миллионы читателей. Великолепная кинотрилогия, снятая Питером Джексоном, в десятки раз увеличила ряды поклонников как Толкина, так и самого жанра героического фэнтези.",
-                        PageAmount = 752,
-                        Price = 1733.00M,
-                        Publishing = "АСТ",
-                        PublishingYear = 2015
-                    },
-                    new Book {
-                        BookId = 4,
-                        AuthorId = 4,
-                        Title = "Игра престолов",
-                        Category = "проза",
-                        Genre = "фэнтези",
-                        Description = "Перед вами — величественное шестикнижие \"Песнь льда и огня\". Эпическая, чеканная сага о мире Семи Королевств. О мире суровых земель вечного холода и радостных земель вечного лета. Мире лордов и героев, воинов и магов, чернокнижников и убийц — всех, кого свела воедино Судьба во исполнение древнего пророчества. О мире опасных приключений, великих деяний и тончайших политических интриг.",
-                        PageAmount = 768,
-                        Price = 711.20M,
-                        Publishing = "АСТ",
-                        PublishingYear = 2021
-                    }
-                );
-                context.SaveChanges();
-            }
+        context.Database.EnsureCreated();
+
+        if (!context.Products.Any()) {
+            context.Products.AddRange(
+                new Product {
+                    Title = "Преступление и наказание",
+                    Author = "Федор Михайлович Достоевский",
+                    Category = "Проза", Genre = "Роман",
+                    Description = "Социально-психологический и социально-философский роман.",
+                    Price = 1000M
+                },
+                new Product {
+                    Title = "Властелин колец",
+                    Author = "Джон Рональд Руэл Толкин",
+                    Category = "Проза", Genre = "Фэнтези",
+                    Description =
+                        "Роман-эпопея английского писателя Дж. Р. Р. Толкина, одно из самых известных произведений жанра фэнтези",
+                    Price = 1200M
+                },
+                new Product {
+                    Title = "Гордость и предубеждение",
+                    Author = "Джейн Остин",
+                    Category = "Проза", Genre = "Роман",
+                    Description = "Роман Джейн Остин, опубликованный в 1813 году.",
+                    Price = 400M
+                },
+                new Product {
+                    Title = "Автостопом по Галактике",
+                    Author = "Дуглас Адамс",
+                    Category = "Проза", Genre = "Фантастика",
+                    Description =
+                        "Юмористический фантастический роман английского писателя Дугласа Адамса. Первая книга одноимённой серии.",
+                    Price = 550M
+                },
+                new Product {
+                    Title = "Гарри Поттер и Кубок огня",
+                    Author = "Джоан Роулинг",
+                    Category = "Проза", Genre = "Роман",
+                    Description =
+                        "Четвёртая книга о приключениях Гарри Поттера, написанная английской писательницей Джоан Роулинг. В Англии опубликована в 2000 году. По сюжету Гарри Поттер против своей воли вовлекается в участие в Турнире Трёх Волшебников, и ему предстоит не только сразиться с более опытными участниками, но и разгадать загадку того, как он вообще попал на турнир вопреки правилам.",
+                    Price = 500M
+                },
+                new Product {
+                    Title = "Убить пересмешника",
+                    Author = "Харпер Ли",
+                    Category = "Проза", Genre = "Роман",
+                    Description =
+                        "Роман-бестселлер американской писательницы Харпер Ли, опубликованный в 1960 году, за который в 1961 году она получила Пулитцеровскую премию. Её успех стал вехой в борьбе за права чернокожих.",
+                    Price = 600M
+                },
+                new Product {
+                    Title = "1984",
+                    Author = "Джордж Оруэлл",
+                    Category = "Проза", Genre = "Роман",
+                    Description =
+                        "Роман-антиутопия Джорджа Оруэлла, изданный в 1949 году. Как отмечает членкор РАН М. Ф. Черныш, это самое главное и последнее произведение писателя.",
+                    Price = 700M
+                }
+            );
+            context.SaveChanges();
         }
     }
 }

@@ -1,33 +1,45 @@
-@model LoginModel
+﻿@model BookShelf.Models.ViewModels.LoginModel
 @{ Layout = null; }
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>SportsStore</title>
+    <title>Book Shelf</title>
     <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />    
 </head>
 <body>
-    <div class="bg-dark text-white p-2">
-        <span class="navbar-brand ml-2">Book Shelf</span>
+<div class="bg-dark text-white p-2">
+    <span class="navbar-brand ml-2">Book Shelf</span>
+</div>
+<div class="m-1 p-1">
+    <div class="text-danger" asp-validation-summary="All"></div>
+    
+    <div>
+        Не зарегистрированы?
+        <a class="btn btn-outline-primary" asp-action="Register" asp-route-returnurl="@Model.ReturnUrl">
+            Зарегистрироваться
+        </a>
     </div>
-    <div class="m-1 p-1">
-        <div class="text-danger" asp-validation-summary="All"></div>
 
-        <form asp-action="Login" asp-controller="Account" method="post">
-            <input type="hidden" asp-for="ReturnUrl" />
-            <div class="form-group">
-                <label asp-for="Name"></label>
-                <div asp-validation-for="Name" class="text-danger"></div>
-                <input asp-for="Name" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <div asp-validation-for="Password" class="text-danger"></div>
-                <input asp-for="Password" type="password" class="form-control" />
-            </div>
-            <button class="btn btn-primary mt-2" type="submit">Войти</button>
-        </form>
-    </div>
+    <form asp-action="Login" asp-controller="Account" method="post">
+        <input type="hidden" asp-for="ReturnUrl" />
+        <div class="form-group">
+            <label asp-for="Name">Имя пользователя</label>
+            <div asp-validation-for="Name" class="text-danger"></div>
+            <input asp-for="Name" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Password">Пароль</label>
+            <div asp-validation-for="Password" class="text-danger"></div>
+            <input asp-for="Password" type="password" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Remember">Замомнить меня</label>
+            <input asp-for="Remember" type="checkbox" value="false" class="form-check-input" />
+        </div>
+        <button class="btn btn-primary mt-2" type="submit">Войти</button>
+    </form>
+</div>
+
 </body>
 </html>

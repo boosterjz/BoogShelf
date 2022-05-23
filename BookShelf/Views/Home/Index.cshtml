@@ -1,7 +1,7 @@
-﻿@model BooksListViewModel
+﻿@model BookShelf.Models.ViewModels.ProductsListViewModel
 
-@foreach (var b in Model?.Books ?? Enumerable.Empty<Book>()) {
-    <partial name="BookSummary" model="b" />
+@foreach (var p in Model?.Products ?? Enumerable.Empty<Product>()) {
+    <partial name="ProductSummary" model="p" />
 }
 
 <div page-model="@Model?.PagingInfo" page-action="Index" page-classes-enabled="true"

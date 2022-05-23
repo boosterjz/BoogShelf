@@ -1,46 +1,46 @@
-using Moq;
+﻿using System.Linq;
 using BookShelf.Models;
 using BookShelf.Pages;
-using System.Linq;
+using Moq;
 using Xunit;
 
-namespace BookShelf.Test {
-    public class CartPageTests {
-        [Fact]
-        public void CanLoadCart() {
-            var b1 = new Book {BookId = 1, Title = "Book 1"};
-            var b2 = new Book {BookId = 2, Title = "Book 2"};
-            var mockedRepository = new Mock<IStoreRepository>();
-            mockedRepository.Setup(r => r.Books).Returns(new Book[] {
-                b1, b2
-            }.AsQueryable());
+namespace BookShelf.Tests; 
 
-            var testCart = new Cart();
-            testCart.AddItem(b1, 2);
-            testCart.AddItem(b2, 1);
+public class CartPageTests {
+    [Fact]
+    public void Can_Load_Cart() {
+        var p1 = new Product { ProductId = 1, Title = "P1" };
+        var p2 = new Product { ProductId = 2, Title = "P2" };
+        var mockRepo = new Mock<IStoreRepository>();
+        mockRepo.Setup(m => m.Products).Returns(new[] {
+            p1, p2
+        }.AsQueryable());
 
-            var cartModel = new CartModel(mockedRepository.Object, testCart);
-            cartModel.OnGet("myUrl");
+        var testCart = new Cart();
+        testCart.AddItem(p1, 2);
+        testCart.AddItem(p2, 1);
 
-            Assert.Equal(2, cartModel.Cart.Lines.Count());
-            Assert.Equal("myUrl", cartModel.ReturnUrl);
-        }
+        var cartModel = new CartModel(mockRepo.Object, testCart);
+        cartModel.OnGet("myUrl");
 
-        [Fact]
-        public void CanUpdateCart() {
-            var mockedRepository = new Mock<IStoreRepository>();
-            mockedRepository.Setup(r => r.Books).Returns(new Book[] {
-                new Book {BookId = 1, Title = "B1"}
-            }.AsQueryable());
+        Assert.Equal(2, cartModel.Cart.Lines.Count);
+        Assert.Equal("myUrl", cartModel.ReturnUrl);
+    }
 
-            var testCart = new Cart();
+    [Fact]
+    public void Can_Update_Cart() {
+        var mockRepo = new Mock<IStoreRepository>();
+        mockRepo.Setup(m => m.Products).Returns(new[] {
+            new Product { ProductId = 1, Title = "P1" }
+        }.AsQueryable());
 
-            var cartModel = new CartModel(mockedRepository.Object, testCart);
-            cartModel.OnPost(1, "myUrl");
+        var testCart = new Cart();
 
-            Assert.Single(testCart.Lines);
-            Assert.Equal("B1", testCart.Lines.First().Book.Title);
-            Assert.Equal(1, testCart.Lines.First().Quantity);
-        }
+        var cartModel = new CartModel(mockRepo.Object, testCart);
+        cartModel.OnPost(1, "myUrl");
+
+        Assert.Single(testCart.Lines);
+        Assert.Equal("P1", testCart.Lines.First().Product.Title);
+        Assert.Equal(1, testCart.Lines.First().Quantity);
     }
 }

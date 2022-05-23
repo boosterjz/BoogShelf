@@ -1,7 +1,7 @@
-@page
-@model CartModel
+﻿@page
+@model BookShelf.Pages.CartModel
 
-<h2>Your cart</h2>
+<h2>Корзина</h2>
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
@@ -13,22 +13,22 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var line in Model?.Cart?.Lines ?? Enumerable.Empty<CartLine>()) {
+        @foreach (var line in Model?.Cart.Lines ?? Enumerable.Empty<CartLine>()) {
             <tr>
                 <td class="text-center">@line.Quantity</td>
-                <td class="text-left">@line.Book.Title</td>
-                <td class="text-right">@line.Book.Price.ToString("c")</td>
+                <td class="text-left">@line.Product.Title</td>
+                <td class="text-right">@line.Product.Price.ToString("c")</td>
                 <td class="text-right">
-                    @((line.Quantity * line.Book.Price).ToString("c"))
+                    @((line.Quantity * line.Product.Price).ToString("c"))
                 </td>
                 <td class="text-center">
                     <form asp-page-handler="Remove" method="post">
-                        <input type="hidden" name="BookId"
-                               value="@line.Book.BookId" />
+                        <input type="hidden" name="ProductID"
+                               value="@line.Product.ProductId" />
                         <input type="hidden" name="returnUrl"
                                value="@Model?.ReturnUrl" />
                         <button type="submit" class="btn btn-sm btn-danger">
-                            Remove
+                            Удалить
                         </button>
                     </form>
                 </td>
@@ -37,7 +37,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="3" class="text-right">Total:</td>
+            <td colspan="3" class="text-right">Общая стоимость:</td>
             <td class="text-right">
                 @Model?.Cart?.ComputeTotalValue().ToString("c")
             </td>
@@ -46,8 +46,8 @@
 </table>
 
 <div class="text-center">
-    <a class="btn btn-primary" href="@Model?.ReturnUrl">Continue shopping</a>
+    <a class="btn btn-primary" href="@Model?.ReturnUrl">К покупкам</a>
     <a class="btn btn-primary" asp-action="Checkout" asp-controller="Order">
-        Checkout
+        Проверить заказ
     </a>
 </div>

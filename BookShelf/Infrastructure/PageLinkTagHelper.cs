@@ -1,43 +1,40 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BookShelf.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using BookShelf.Models.ViewModels;
 
-namespace BookShelf.Infrastructure {
+namespace BookShelf.Infrastructure;
 
-    [HtmlTargetElement("div", Attributes = "page-model")]
-    public class PageLinkTagHelper : TagHelper {
-        private IUrlHelperFactory _urlHelperFactory;
+[HtmlTargetElement("div", Attributes = "page-model")]
+public class PageLinkTagHelper : TagHelper {
+    private readonly IUrlHelperFactory _urlHelperFactory;
 
-        public PageLinkTagHelper(IUrlHelperFactory helperFactory) {
-            _urlHelperFactory = helperFactory;
-        }
+    public PageLinkTagHelper(IUrlHelperFactory helperFactory) {
+        _urlHelperFactory = helperFactory;
+    }
 
-        [ViewContext]
-        [HtmlAttributeNotBound]
-        public ViewContext? ViewContext { get; set; }
+    [ViewContext]
+    [HtmlAttributeNotBound]
+    public ViewContext? ViewContext { get; set; }
 
-        public PagingInfo? PageModel { get; set; }
+    public PagingInfo? PageModel { get; set; }
 
-        public string? PageAction { get; set; }
+    public string? PageAction { get; set; }
 
-        [HtmlAttributeName(DictionaryAttributePrefix = "page-url-")]
-        public Dictionary<string, object> PageUrlValues { get; set; }
-            = new();
+    [HtmlAttributeName(DictionaryAttributePrefix = "page-url-")]
+    public Dictionary<string, object> PageUrlValues { get; set; }
+        = new();
 
-        public bool PageClassesEnabled { get; set; } = false;
-        public string PageClass { get; set; } = string.Empty;
-        public string PageClassNormal { get; set; } = string.Empty;
-        public string PageClassSelected { get; set; } = string.Empty;
+    public bool PageClassesEnabled { get; set; } = false;
+    public string PageClass { get; set; } = string.Empty;
+    public string PageClassNormal { get; set; } = string.Empty;
+    public string PageClassSelected { get; set; } = string.Empty;
 
-        public override void Process(TagHelperContext context,
-                TagHelperOutput output) {
-            if (ViewContext == null || PageModel == null) {
-                return;
-            }
-
+    public override void Process(TagHelperContext context,
+        TagHelperOutput output) {
+        if (ViewContext != null && PageModel != null) {
             IUrlHelper urlHelper = _urlHelperFactory.GetUrlHelper(ViewContext);
             TagBuilder result = new TagBuilder("div");
             for (int i = 1; i <= PageModel.TotalPages; i++) {

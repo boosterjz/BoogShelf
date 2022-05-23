@@ -1,30 +1,30 @@
-using Microsoft.EntityFrameworkCore;
 using BookShelf.Models;
-
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<BookShelfDbContext>(opts => 
-    opts.UseNpgsql(builder.Configuration.GetConnectionString("DbConnection")));
+builder.Services.AddDbContext<StoreDbContext>(opts =>
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("BookShelfConnection")));
 
-builder.Services.AddScoped<IStoreRepository, BookShelfRepository>();
-builder.Services.AddScoped<IOrderRepository, BookShelfOrderRepository>();
+builder.Services.AddScoped<IStoreRepository, EfStoreRepository>();
+builder.Services.AddScoped<IOrderRepository, EfOrderRepository>();
+
+builder.Services.AddDbContext<AppIdentityDbContext>(opts =>
+    opts.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection")));
+
+builder.Services.AddIdentity<BookShelfUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppIdentityDbContext>();
 
 builder.Services.AddRazorPages();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
-builder.Services.AddScoped<Cart>(sp => SessionCart.GetCart(sp));
+builder.Services.AddScoped(SessionCart.GetCart);
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddDbContext<AppIdentityDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("IdentityConnection")));
-
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<AppIdentityDbContext>();
 
 var app = builder.Build();
 
@@ -45,18 +45,32 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute("catpage",
-    "{category}/Page{page:int}",
+    "Categories/{category}/Page{productPage:int}",
     new { Controller = "Home", action = "Index" });
 
-app.MapControllerRoute("page", "Page{page:int}",
-    new { Controller = "Home", action = "Index", page = 1 });
+app.MapControllerRoute("genrepage",
+    "Genres/{genre}/Page{productPage:int}",
+    new { Controller = "Home", action = "Genre" });
 
-app.MapControllerRoute("category", "{category}",
-    new { Controller = "Home", action = "Index", page = 1 });
+app.MapControllerRoute("page",
+    "Author/{author}/Page{productPage:int}",
+    new { Controller = "Home", action = "author" });
+
+app.MapControllerRoute("page", "Page{productPage:int}",
+    new { Controller = "Home", action = "Index", productPage = 1 });
+
+app.MapControllerRoute("category", "Categories/{category}",
+    new { Controller = "Home", action = "Index", productPage = 1 });
+
+app.MapControllerRoute("genres", "Genres/{category}",
+    new { Controller = "Home", action = "Genre", productPage = 1 });
+
+app.MapControllerRoute("authors", "Authors/{category}",
+    new { Controller = "Home", action = "Author", productPage = 1 });
 
 app.MapControllerRoute("pagination",
-    "Books/Page{page}",
-    new { Controller = "Home", action = "Index", page = 1 });
+    "Products/Page{productPage}",
+    new { Controller = "Home", action = "Index", productPage = 1 });
 
 app.MapDefaultControllerRoute();
 app.MapRazorPages();

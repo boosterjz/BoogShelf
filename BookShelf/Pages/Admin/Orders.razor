@@ -1,10 +1,10 @@
-@page "/admin/orders"
-@inherits OwningComponentBase<IOrderRepository>
+﻿@page "/admin/orders"
+@inherits OwningComponentBase<BookShelf.Models.IOrderRepository>
 
-<OrderTable TableTitle="Недоставленные заказы" 
-        Orders="UnshippedOrders" ButtonLabel="Ship" OrderSelected="ShipOrder" />
-<OrderTable TableTitle="Доставленные заказы" 
-       Orders="ShippedOrders" ButtonLabel="Reset" OrderSelected="ResetOrder" />
+<OrderTable TableTitle="Unshipped Orders" 
+        Orders="UnshippedOrders" ButtonLabel="Доставить" OrderSelected="ShipOrder" />
+<OrderTable TableTitle="Shipped Orders" 
+       Orders="ShippedOrders" ButtonLabel="Отмена" OrderSelected="ResetOrder" />
 <button class="btn btn-info" @onclick="@(e => UpdateData())">Обновить</button>
 
 @code {
@@ -31,7 +31,7 @@
     public void ResetOrder(int id) => UpdateOrder(id, false);
 
     private void UpdateOrder(int id, bool shipValue) {
-        var o = Repository.Orders.FirstOrDefault(o => o.OrderID == id);
+        Order? o = Repository.Orders.FirstOrDefault(o => o.OrderId == id);
         if (o != null) {
             o.Shipped = shipValue;
             Repository.SaveOrder(o);

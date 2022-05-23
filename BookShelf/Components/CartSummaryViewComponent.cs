@@ -1,17 +1,16 @@
+﻿using BookShelf.Models;
 using Microsoft.AspNetCore.Mvc;
-using BookShelf.Models;
 
-namespace BookShelf.Components {
+namespace BookShelf.Components;
 
-    public class CartSummaryViewComponent : ViewComponent {
-        private Cart cart;
+public class CartSummaryViewComponent : ViewComponent {
+    private Cart _cart;
 
-        public CartSummaryViewComponent(Cart cartService) {
-            cart = cartService;
-        }
+    public CartSummaryViewComponent(Cart cartService) {
+        _cart = cartService;
+    }
 
-        public IViewComponentResult Invoke() {
-            return View(cart);
-        }
+    public IViewComponentResult Invoke() {
+        return View(_cart);
     }
 }

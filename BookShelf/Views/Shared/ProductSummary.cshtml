@@ -1,18 +1,20 @@
-@model Book
+﻿@using BookShelf.Infrastructure
+@model BookShelf.Models.Product
 
 <div class="card card-outline-primary m-1 p-1">
     <div class="bg-faded p-1">
         <h4>
-            @Model?.Title
+            @Model.Title
             <span class="badge rounded-pill bg-primary text-white" 
-                   style="float:right">
-                <small>@Model?.Price.ToString("c")</small>
+                  style="float:right">
+                <small>@Model.Price.ToString("c")</small>
             </span>
         </h4>
+        <h3>@Model.Author</h3>
     </div>
 
-    <form id="@Model?.BookId" asp-page="/Cart" method="post">
-        <input type="hidden" asp-for="BookId" />
+    <form id="@Model?.ProductId" asp-page="/Cart" method="post">
+        <input type="hidden" asp-for="ProductId" />
         <input type="hidden" name="returnUrl"
                value="@ViewContext.HttpContext.Request.PathAndQuery()" />
         <span class="card-text p-1">

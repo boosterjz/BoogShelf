@@ -1,21 +1,20 @@
+﻿using BookShelf.Models;
 using Microsoft.AspNetCore.Mvc;
-using BookShelf.Models;
 
-namespace BookShelf.Components {
+namespace BookShelf.Components;
 
-    public class NavigationMenuViewComponent : ViewComponent {
-        private IStoreRepository _repository;
+public class NavigationMenuViewComponent : ViewComponent {
+    private IStoreRepository _repository;
 
-        public NavigationMenuViewComponent(IStoreRepository repository) {
-            _repository = repository;
-        }
+    public NavigationMenuViewComponent(IStoreRepository repo) {
+        _repository = repo;
+    }
 
-        public IViewComponentResult Invoke() {
-            ViewBag.SelectedCategory = RouteData?.Values["category"];
-            return View(_repository.Books
-                .Select(x => x.Category)
-                .Distinct()
-                .OrderBy(x => x));
-        }
+    public IViewComponentResult Invoke() {
+        ViewBag.SelectedCategory = RouteData.Values["category"] ?? "";
+        return View(_repository.Products
+            .Select(x => x.Category)
+            .Distinct()
+            .OrderBy(x => x));
     }
 }

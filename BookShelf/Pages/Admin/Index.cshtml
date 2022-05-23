@@ -1,12 +1,12 @@
-@page "/admin"
+﻿@page "/admin"
 @{  Layout = null; }
 @using Microsoft.AspNetCore.Authorization
-@attribute [Authorize]
+@attribute [Authorize(Roles = "admin")]
 
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <title>Book Shelf Панель Администрирования</title>
+    <title>Book Shelf Администрирование</title>
     <link href="/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <base href="/" />  
 </head>

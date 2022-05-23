@@ -1,128 +1,130 @@
-
-using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using System.Linq;
+﻿using System.Linq;
 using BookShelf.Controllers;
 using BookShelf.Models;
 using BookShelf.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
-namespace BookShelf.Tests {
-    public class HomeControllerTest {
-        [Fact]
-        public void CanUseRepository() {
-            // устанавливаем имитацию базы данных для контроллера
-            var mock = new Mock<IStoreRepository>();
-            mock.Setup(m => m.Books).Returns(new Book[] {
-                new() { BookId = 1, Title = "Book1" },
-                new() { BookId = 2, Title = "Book2" },
-            }.AsQueryable());
-            // создаем коотроллер
-            var controller = new HomeController(mock.Object);
+namespace BookShelf.Tests; 
 
-            // получаем данные, переданные в контроллер
-            var result = controller.Index(null)?.ViewData.Model as BooksListViewModel ?? new();
+public class HomeControllerTests {
+    [Fact]
+    public void Can_Use_Repository() {
+        var mock = new Mock<IStoreRepository>();
+        mock.Setup(m => m.Products).Returns(new[] {
+            new Product {ProductId = 1, Title = "P1"},
+            new Product {ProductId = 2, Title = "P2"}
+        }.AsQueryable());
 
-            // делаем проверки
-            var resultArray = result.Books.ToArray();
-            Assert.Equal(2, resultArray.Length);
-            Assert.Equal("Book1", resultArray[0].Title);
-            Assert.Equal("Book2", resultArray[1].Title);
-        }
+        var controller = new HomeController(mock.Object);
 
-        [Fact]
-        public void CanPaginate() {
-            var mock = new Mock<IStoreRepository>();
-            mock.Setup(m => m.Books).Returns(new Book[] {
-                new() {BookId = 1, Title = "b1"},
-                new() {BookId = 2, Title = "b2"},
-                new() {BookId = 3, Title = "b3"},
-                new() {BookId = 4, Title = "b4"},
-                new() {BookId = 5, Title = "b5"},
-            }.AsQueryable());
-            var controller = new HomeController(mock.Object);
-            controller.PageSize = 3;
+        var result =
+            controller.Index(null).ViewData.Model
+                as ProductsListViewModel ?? new ProductsListViewModel();
 
-            var result = controller.Index(null, 2)?.ViewData.Model as BooksListViewModel ?? new();
+        var prodArray = result.Products.ToArray();
+        Assert.True(prodArray.Length == 2);
+        Assert.Equal("P1", prodArray[0].Title);
+        Assert.Equal("P2", prodArray[1].Title);
+    }
 
-            var resultArray = result.Books.ToArray();
-            Assert.Equal(2, resultArray.Length);
-            Assert.Equal("b4", resultArray?[0].Title);
-            Assert.Equal("b5", resultArray?[1].Title);
-        }
+    [Fact]
+    public void Can_Paginate() {
+        var mock = new Mock<IStoreRepository>();
+        mock.Setup(m => m.Products).Returns(new[] {
+            new Product {ProductId = 1, Title = "P1"},
+            new Product {ProductId = 2, Title = "P2"},
+            new Product {ProductId = 3, Title = "P3"},
+            new Product {ProductId = 4, Title = "P4"},
+            new Product {ProductId = 5, Title = "P5"}
+        }.AsQueryable());
 
-        [Fact]
-        public void CanSendPaginationViewModel() {
-            var mock = new Mock<IStoreRepository>();
-            mock.Setup(m => m.Books).Returns(new Book[] {
-                new() {BookId = 1, Title = "b1"},
-                new() {BookId = 2, Title = "b2"},
-                new() {BookId = 3, Title = "b3"},
-                new() {BookId = 4, Title = "b4"},
-                new() {BookId = 5, Title = "b5"}
-            }.AsQueryable());
-            var controller = new HomeController(mock.Object) {PageSize = 3};
+        var controller = new HomeController(mock.Object);
+        controller.PageSize = 3;
 
-            var result = controller.Index(null, 2)?.ViewData.Model as BooksListViewModel ?? new();
+        var result =
+            controller.Index(null, 2).ViewData.Model
+                as ProductsListViewModel ?? new ProductsListViewModel();
 
-            var pagingInfo = result.PagingInfo;
-            Assert.Equal(2, pagingInfo.CurrentPage);
-            Assert.Equal(3, pagingInfo.ItemsPerPage);
-            Assert.Equal(5, pagingInfo.TotalItems);
-            Assert.Equal(2, pagingInfo.TotalPages);
-        }
+        var prodArray = result.Products.ToArray();
+        Assert.True(prodArray.Length == 2);
+        Assert.Equal("P4", prodArray[0].Title);
+        Assert.Equal("P5", prodArray[1].Title);
+    }
 
-        [Fact]
-        public void CanFilterBooks() {
+    [Fact]
+    public void Can_Send_Pagination_View_Model() {
+        var mock = new Mock<IStoreRepository>();
+        mock.Setup(m => m.Products).Returns(new[] {
+            new Product {ProductId = 1, Title = "P1"},
+            new Product {ProductId = 2, Title = "P2"},
+            new Product {ProductId = 3, Title = "P3"},
+            new Product {ProductId = 4, Title = "P4"},
+            new Product {ProductId = 5, Title = "P5"}
+        }.AsQueryable());
 
-            var mock = new Mock<IStoreRepository>();
-            mock.Setup(m => m.Books).Returns(new Book[] {
-                new Book {BookId = 1, Title = "b1", Category = "Cat1"},
-                new Book {BookId = 2, Title = "b2", Category = "Cat2"},
-                new Book {BookId = 3, Title = "b3", Category = "Cat1"},
-                new Book {BookId = 4, Title = "b4", Category = "Cat2"},
-                new Book {BookId = 5, Title = "b5", Category = "Cat3"}
-            }.AsQueryable());
+        var controller =
+            new HomeController(mock.Object) { PageSize = 3 };
 
-            HomeController controller = new HomeController(mock.Object);
-            controller.PageSize = 3;
+        var result =
+            controller.Index(null, 2).ViewData.Model as
+                ProductsListViewModel ?? new ProductsListViewModel();
 
-            var result = (controller.Index("Cat2", 1)?.ViewData.Model
-                as BooksListViewModel ?? new()).Books.ToArray();
+        var pageInfo = result.PagingInfo;
+        Assert.Equal(2, pageInfo.CurrentPage);
+        Assert.Equal(3, pageInfo.ItemsPerPage);
+        Assert.Equal(5, pageInfo.TotalItems);
+        Assert.Equal(2, pageInfo.TotalPages);
+    }
 
-            Assert.Equal(2, result.Length);
-            Assert.True(result[0].Title == "b2" && result[0].Category == "Cat2");
-            Assert.True(result[1].Title == "b4" && result[1].Category == "Cat2");
-        }
+    [Fact]
+    public void Can_Filter_Products() {
+        var mock = new Mock<IStoreRepository>();
+        mock.Setup(m => m.Products).Returns(new[] {
+            new Product {ProductId = 1, Title = "P1", Category = "Cat1"},
+            new Product {ProductId = 2, Title = "P2", Category = "Cat2"},
+            new Product {ProductId = 3, Title = "P3", Category = "Cat1"},
+            new Product {ProductId = 4, Title = "P4", Category = "Cat2"},
+            new Product {ProductId = 5, Title = "P5", Category = "Cat3"}
+        }.AsQueryable());
 
-        [Fact]
-        public void GenerateCategorySpecificBookCount() {
-            var mock = new Mock<IStoreRepository>();
-            mock.Setup(m => m.Books).Returns(new Book[] {
-                new Book {BookId = 1, Title = "P1", Category = "Cat1"},
-                new Book {BookId = 2, Title = "P2", Category = "Cat2"},
-                new Book {BookId = 3, Title = "P3", Category = "Cat1"},
-                new Book {BookId = 4, Title = "P4", Category = "Cat2"},
-                new Book {BookId = 5, Title = "P5", Category = "Cat3"}
-            }.AsQueryable());
+        var controller = new HomeController(mock.Object);
+        controller.PageSize = 3;
 
-            var target = new HomeController(mock.Object);
-            target.PageSize = 3;
+        var result = (controller.Index("Cat2").ViewData.Model
+            as ProductsListViewModel ?? new ProductsListViewModel()).Products.ToArray();
 
-            Func<ViewResult, BooksListViewModel?> GetModel = result
-                => result?.ViewData?.Model as BooksListViewModel;
+        Assert.Equal(2, result.Length);
+        Assert.True(result[0].Title == "P2" && result[0].Category == "Cat2");
+        Assert.True(result[1].Title == "P4" && result[1].Category == "Cat2");
+    }
 
-            int? res1 = GetModel(target.Index("Cat1"))?.PagingInfo.TotalItems;
-            int? res2 = GetModel(target.Index("Cat2"))?.PagingInfo.TotalItems;
-            int? res3 = GetModel(target.Index("Cat3"))?.PagingInfo.TotalItems;
-            int? resAll = GetModel(target.Index(null))?.PagingInfo.TotalItems;
 
-            Assert.Equal(2, res1);
-            Assert.Equal(2, res2);
-            Assert.Equal(1, res3);
-            Assert.Equal(5, resAll);
-        }
+    [Fact]
+    public void Generate_Category_Specific_Product_Count() {
+        var mock = new Mock<IStoreRepository>();
+        mock.Setup(m => m.Products).Returns(new[] {
+            new Product {ProductId = 1, Title = "P1", Category = "Cat1"},
+            new Product {ProductId = 2, Title = "P2", Category = "Cat2"},
+            new Product {ProductId = 3, Title = "P3", Category = "Cat1"},
+            new Product {ProductId = 4, Title = "P4", Category = "Cat2"},
+            new Product {ProductId = 5, Title = "P5", Category = "Cat3"}
+        }.AsQueryable());
+
+        var target = new HomeController(mock.Object);
+        target.PageSize = 3;
+
+        ProductsListViewModel? GetModel(ViewResult result) => result.ViewData.Model as ProductsListViewModel;
+
+        var res1 = GetModel(target.Index("Cat1"))?.PagingInfo.TotalItems;
+        var res2 = GetModel(target.Index("Cat2"))?.PagingInfo.TotalItems;
+        var res3 = GetModel(target.Index("Cat3"))?.PagingInfo.TotalItems;
+        var resAll = GetModel(target.Index(null))?.PagingInfo.TotalItems;
+
+        Assert.Equal(2, res1);
+        Assert.Equal(2, res2);
+        Assert.Equal(1, res3);
+        Assert.Equal(5, resAll);
     }
 }

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Book Shelf</title>
@@ -11,6 +11,38 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col navbar-brand">Book Shelf</div>
+                <div class="col">
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <a class="btn btn-outline-secondary" 
+                           asp-controller="Account" 
+                           asp-action=@(User.IsInRole("admin") ? "AdminPage" : "UserPage")>
+                            @User.Identity.Name
+                        </a>
+                        
+                        <a class="btn btn-outline-secondary"
+                           asp-controller="Account"
+                           asp-action="Logout"
+                           asp-route-returnurl="/">
+                            Выйти
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-secondary" 
+                           asp-controller="Account" 
+                           asp-action="Login"
+                           asp-route-returnurl="/">
+                            Войти
+                        </a>
+                        <a class="btn btn-outline-secondary" 
+                           asp-controller="Account" 
+                           asp-action="Register"
+                           asp-route-returnurl="/">
+                            Зарегистрироваться
+                        </a>
+                    }
+                </div>
                 <div class="col-6 navbar-text text-end">
                     <vc:cart-summary />
                 </div>
@@ -20,6 +52,8 @@
     <div class="row m-1 p-1">
         <div id="categories" class="col-3">
             <vc:navigation-menu />
+            <vc:genre-filter/>
+            <vc:author-filter/>
         </div>
         <div class="col-9">
             @RenderBody()

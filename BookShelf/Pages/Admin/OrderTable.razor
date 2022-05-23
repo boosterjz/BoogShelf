@@ -1,3 +1,4 @@
+﻿@using BookShelf.Models
 <table class="table table-sm table-striped table-bordered">
     <thead>
         <tr><th colspan="5" class="text-center">@TableTitle</th></tr>
@@ -9,7 +10,7 @@
                     <td>@o.Name</td><td>@o.Zip</td><th>Название</th><th>Количество</th>
                 <td>                    
                     <button class="btn btn-sm btn-danger" 
-                            @onclick="@(e => OrderSelected.InvokeAsync(o.OrderID))">
+                            @onclick="@(e => OrderSelected.InvokeAsync(o.OrderId))">
                         @ButtonLabel
                     </button>
                 </td>
@@ -17,13 +18,13 @@
                 @foreach (CartLine line in o.Lines) {
                     <tr>
                         <td colspan="2"></td>
-                        <td>@line.Book.Title</td><td>@line.Quantity</td>
+                        <td>@line.Product.Title</td><td>@line.Quantity</td>
                         <td></td>
                     </tr>
                 }
             }
         } else { 
-            <tr><td colspan="5" class="text-center">Нет заказов</td></tr>
+            <tr><td colspan="5" class="text-center">Отсутсвуют заказы</td></tr>
         } 
     </tbody>
 </table>

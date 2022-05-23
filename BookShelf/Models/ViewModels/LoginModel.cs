@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace BookShelf.Models.ViewModels {
 
@@ -11,5 +11,7 @@ namespace BookShelf.Models.ViewModels {
         public string? Password { get; set; }
 
         public string ReturnUrl { get; set; } = "/";
+        
+        public bool Remember { get; set; }
     }
 }

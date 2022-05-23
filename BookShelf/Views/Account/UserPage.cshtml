@@ -1,0 +1,35 @@
+﻿@using System.Text
+@model IEnumerable<Order>
+
+<h1>Страница пользователя @User.Identity?.Name</h1>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Адрес</th>
+        <th scope="col">Статус</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var order in Model) {
+        <tr>
+            <th scope="row">@order.OrderId</th>
+            <th>@ConstructAddress(order)</th>
+            <th>@(order.Shipped ? "Доставлен" : "В доставке")</th>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@functions {
+
+    private static string ConstructAddress(Order o) {
+        var stringBuilder = new StringBuilder();
+        stringBuilder.AppendJoin(' ', o.Country, ", г. " + o.City, ", ул. " + o.Street, ", д. " + o.House, ", кв. " + o.Apartment, o.Zip);
+        return stringBuilder.ToString();
+    }
+
+}
+
+
